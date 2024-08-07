@@ -43,7 +43,7 @@ function PANEL:UpdateStatistic(key, value)
 end
 
 function PANEL:SetText(text)
-    self.Text = text
+    self.Text = text or ""
     self:SizeElement()
     return self
 end

@@ -22,7 +22,7 @@ PIXEL.RegisterFont("HUD.AmmoCount", "Open Sans SemiBold", 40, 400)
 
 function PANEL:Init()
     self.ShouldShow = false
-    self.HasLicense = LocalPlayer():getDarkRPVar("HasGunlicense")
+    self.HasLicense = false -- LocalPlayer():getDarkRPVar("HasGunlicense")
     self.AmmoCount = 0
     self.AmmoReserve = 0
 

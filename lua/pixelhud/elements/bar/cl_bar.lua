@@ -36,7 +36,7 @@ function PANEL:Init()
         self.Avatar:SetRounding(PIXEL.Scale(2))
     end
 
-    avatarElem:SetText(self.Player:getDarkRPVar("rpname"))
+    avatarElem:SetText(self.Player:Nick())
 
     local comma, max, round = string.Comma, math.max, math.Round
     local function numberFormatter(val)
@@ -53,12 +53,12 @@ function PANEL:Init()
     armorElem.CurValue = 0
     armorElem.TargetValue = self.Player:Armor()
 
-    self:AddElement("WRF0KWw", "job"):SetText(self.Player:getDarkRPVar("job"))
+    self:AddElement("WRF0KWw", "job"):SetText((self.Player:GetClassData() and self.Player:GetClassData().name) or "Invalid Job")
 
     local moneyElem = self:AddElement("0IpCrnN", "money", nil, PIXEL.FormatMoney, true)
     moneyElem:SetText("$0"):SetIconColor(colors.Money)
     moneyElem.CurValue = 0
-    moneyElem.TargetValue = self.Player:getDarkRPVar("money")
+    moneyElem.TargetValue = (self.Player:GetCharacter() and self.Player:GetCharacter():GetMoney()) or 0
 
     local timeElem = self:AddElement("fyibNtJ", "time", nil, PIXEL.FormatTime)
     timeElem:SetText("0m 0s")
@@ -109,9 +109,9 @@ function PANEL:Paint(w, h)
 
     local nameW = PIXEL.DrawSimpleText(PIXEL.HUD.ServerName, "HUD.BarElement", w - PIXEL.Scale(7), h / 2, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
-    if self.Player:getDarkRPVar("wanted") then
-        PIXEL.DrawSimpleText("Wanted", "HUD.BarElement", w - PIXEL.Scale(19) - nameW, h / 2, colorAlpha(colors.Wanted, math.sin(CurTime() * 4) * 100 + 155), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-    end
+    -- if self.Player:getDarkRPVar("wanted") then
+    --     PIXEL.DrawSimpleText("Wanted", "HUD.BarElement", w - PIXEL.Scale(19) - nameW, h / 2, colorAlpha(colors.Wanted, math.sin(CurTime() * 4) * 100 + 155), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    -- end
 end
 
 vgui.Register("PIXEL.HUD.Bar", PANEL, "Panel")

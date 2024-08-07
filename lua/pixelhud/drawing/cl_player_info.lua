@@ -25,20 +25,41 @@ local hideArmor
 local max = math.max
 local lerp = Lerp
 local ft = FrameTime
-local getTeamName = team.GetName
+local function getPlyName(ply)
+    local char = ply:GetCharacter()
+    if not char then return ply:Name() end
+    local rank = (char:GetData("rank") or "") .. " "
+    return rank .. ply:Name()
+end
+local function getTeamName(ply)
+    local char = ply:GetCharacter()
+    if not char then return "" end
+
+    local faction = ix.faction.indices[char:GetFaction()]
+    local class = ix.class.list[char:GetClass()]
+    if not faction or not class then return "" end
+
+    return faction.name .. ": " .. class.name
+end
+local function getCharMoney(ply)
+    local char = ply:GetCharacter()
+    if not char then return 0 end
+    return char:GetMoney()
+end
+
 local function updateStats(ply)
-    name = ply:Name()
-    teamName = getTeamName(ply:Team())
+    name = getPlyName(ply)
+    teamName = getTeamName(ply)
 
     local animSpeed = ft() * 3
     health = max(lerp(animSpeed, health, ply:Health()), 0)
     armor = lerp(animSpeed, armor, ply:Armor())
-    money = lerp(animSpeed, money, ply:getDarkRPVar("money"))
+    money = lerp(animSpeed, money, getCharMoney(ply))
 
     maxHealth = max(maxHealth, health)
     maxArmor = max(maxArmor, armor)
 
-    wanted = ply:getDarkRPVar("wanted")
+    wanted = false -- ply:getDarkRPVar("wanted")
 
     if armor < 1 then hideArmor = true
     else hideArmor = false end

@@ -22,29 +22,54 @@ function PIXEL.HUD.SetupOverheadDrawing()
         { --Name
             imgurId = "6lHN1nU",
             color = function(ply) return (ply:IsUserGroup("vip") or ply:IsUserGroup("vip+")) and PIXEL.GetRainbowColor() or colors.Name end,
-            getter = function(ply) return ply:Name() end
+            getter = function(ply)
+                if not playerRanks or not playerRanks[ply:SteamID64()] then return ply:Name() end
+                local rank = (playerRanks[ply:SteamID64()].rank or "") .. " "
+                return rank .. ply:Name()
+            end
         },
-        { --Job
+        { --Faction
             imgurId = "CqIwC9T",
             color = function(ply) return team.GetColor(ply:Team()) end,
-            getter = function(ply) return team.GetName(ply:Team()) end
-        },
-        { --Gang
-            imgurId = "sMh3imc",
-            color = colors.Gang,
             getter = function(ply)
-                if ply:GetGangID() <= 0 then return "N/A" end
+                local char = ply:GetCharacter()
+                if not char then return "" end
 
-                local gangInfo = BRS_PLYGANGINFO and BRS_PLYGANGINFO[ply:SteamID()] or false
-                if not (gangInfo and gangInfo.Name) then
-                    BRICKS_SERVER.Func.RequestPlyGangInfo(ply:SteamID())
-                    return "N/A"
-                end
+                local faction = ix.faction.indices[char:GetFaction()]
+                if not faction then return "" end
 
-                return gangInfo.Name or "N/A"
-            end,
-            shouldShow = function(ply) return ply:HasGang() end
+                return faction.name
+            end
         },
+        { --Class
+            imgurId = "CqIwC9T",
+            color = function(ply) return team.GetColor(ply:Team()) end,
+            getter = function(ply)
+                local char = ply:GetCharacter()
+                if not char then return "" end
+
+                local class = ix.class.list[char:GetClass()]
+                if not class then return "" end
+
+                return class.name
+            end
+        },
+        -- { --Gang
+        --     imgurId = "sMh3imc",
+        --     color = colors.Gang,
+        --     getter = function(ply)
+        --         if ply:GetGangID() <= 0 then return "N/A" end
+
+        --         local gangInfo = BRS_PLYGANGINFO and BRS_PLYGANGINFO[ply:SteamID()] or false
+        --         if not (gangInfo and gangInfo.Name) then
+        --             BRICKS_SERVER.Func.RequestPlyGangInfo(ply:SteamID())
+        --             return "N/A"
+        --         end
+
+        --         return gangInfo.Name or "N/A"
+        --     end,
+        --     shouldShow = function(ply) return ply:HasGang() end
+        -- },
         { --Health
             imgurId = "TsGKspF",
             color = colors.Health,
@@ -56,18 +81,18 @@ function PIXEL.HUD.SetupOverheadDrawing()
             getter = function(ply) return ply:Armor() end,
             shouldShow = function(ply) return ply:Armor() > 0 end
         },
-        { --Gun License
-            imgurId = "mv33zwQ",
-            color = colors.License,
-            getter = function(ply) return "Licensed" end,
-            shouldShow = function(ply) return ply:getDarkRPVar("HasGunlicense") end
-        },
-        { --Wanted
-            imgurId = "cxOssG3",
-            color = function(ply) return colors.Wanted end,
-            getter = function(ply) return "Wanted" end,
-            shouldShow = function(ply) return ply:getDarkRPVar("wanted") end
-        }
+        -- { --Gun License
+        --     imgurId = "mv33zwQ",
+        --     color = colors.License,
+        --     getter = function(ply) return "Licensed" end,
+        --     shouldShow = function(ply) return ply:getDarkRPVar("HasGunlicense") end
+        -- },
+        -- { --Wanted
+        --     imgurId = "cxOssG3",
+        --     color = function(ply) return colors.Wanted end,
+        --     getter = function(ply) return "Wanted" end,
+        --     shouldShow = function(ply) return ply:getDarkRPVar("wanted") end
+        -- }
     }
 
     PIXEL.RegisterFontUnscaled("HUD.OverheadText", "Open Sans SemiBold", 120)
@@ -78,7 +103,7 @@ function PIXEL.HUD.SetupOverheadDrawing()
     local meta = FindMetaTable("Player")
 
     function meta:DrawPlayerStats()
-        local alpha = min(remap(localPly:GetPos():DistToSqr(self:GetPos()), 90000, 160000, 1, 0), 1)
+        local alpha = min(remap(localPly:GetPos():DistToSqr(self:GetPos()), 5000, 20000, 1, 0), 1)
 
         local eyeAngs = localPly:EyeAngles()
         local pos = self:LocalToWorld(self:OBBCenter())
