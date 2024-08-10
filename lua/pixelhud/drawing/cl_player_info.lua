@@ -35,9 +35,10 @@ local function getTeamName(ply)
     local char = ply:GetCharacter()
     if not char then return "" end
 
-    local faction = ix.faction.indices[char:GetFaction()]
-    local class = ix.class.list[char:GetClass()]
-    if not faction or not class then return "" end
+    local faction = ix.faction.Get(char:GetFaction())
+    local class = ix.class.Get(char:GetClass())
+    if not faction then return "Invalid Faction" end
+    if not class then return faction.name end
 
     return faction.name .. ": " .. class.name
 end

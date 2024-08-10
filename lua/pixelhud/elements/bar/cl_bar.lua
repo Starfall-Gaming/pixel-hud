@@ -36,7 +36,12 @@ function PANEL:Init()
         self.Avatar:SetRounding(PIXEL.Scale(2))
     end
 
-    avatarElem:SetText(self.Player:Nick())
+    local char = self.Player:GetCharacter()
+    if char then
+        avatarElem:SetText(char:GetData("rank") .. " " .. self.Player:Nick())
+    else
+        avatarElem:SetText(self.Player:Nick())
+    end
 
     local comma, max, round = string.Comma, math.max, math.Round
     local function numberFormatter(val)
@@ -53,7 +58,11 @@ function PANEL:Init()
     armorElem.CurValue = 0
     armorElem.TargetValue = self.Player:Armor()
 
-    self:AddElement("WRF0KWw", "job"):SetText((self.Player:GetClassData() and self.Player:GetClassData().name) or "Invalid Job")
+    local class = self.Player:GetClassData()
+    if class then 
+        local faction = ix.faction.indices[class.faction]
+        self:AddElement("WRF0KWw", "job"):SetText((faction.name .. ": " .. class.name) or "Invalid Job")
+    end
 
     local moneyElem = self:AddElement("0IpCrnN", "money", nil, PIXEL.FormatMoney, true)
     moneyElem:SetText("$0"):SetIconColor(colors.Money)
