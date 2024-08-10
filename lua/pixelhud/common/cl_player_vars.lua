@@ -15,7 +15,7 @@
 
 local localPly = LocalPlayer()
 
-hook.Add("DarkRPVarChanged", "PIXEL.DarkRPVarChanged", function(ply, key, _, value)
+hook.Add("CharacterVarChanged", "PIXEL.CharacterVarChanged", function(ply, key, _, value)
     if not IsValid(localPly) then return end
     if ply ~= localPly then return end
     if localPly:Name() ~= ply:Name() then return end
